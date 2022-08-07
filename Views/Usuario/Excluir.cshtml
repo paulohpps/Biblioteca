@@ -1,0 +1,12 @@
+﻿@model Usuario
+<h1 class="row justify-content-md-center">Exclusão de Usuários</h1>
+<div class="row justify-content-md-center">
+    <form asp-action="Excluir" method="POST" class="col-md-4">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Nome">Você deseja realmente excluir o usuário <a class="text-danger">@Model.Nome</a></label>
+        </div>
+        <input type="submit" value="Confirmar" class="btn btn-danger justify-content-center"/>
+        <button href="/Usuario/Listagem" class="btn btn-primary justify-content-center">Cancelar</button>
+    </form>
+</div>
