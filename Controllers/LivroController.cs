@@ -1,63 +1,75 @@
 using Biblioteca.Models;
+using Biblioteca.Validations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Linq;
-using X.PagedList;
+using FluentValidation.Results;
 
 namespace Biblioteca.Controllers
 {
     public class LivroController : Controller
     {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            Autenticacao.CheckLogin(this);
+        }
+
         public IActionResult Cadastro()
         {
-            Autenticacao.CheckLogin(this);
             return View();
         }
 
         [HttpPost]
         public IActionResult Cadastro(Livro l)
         {
-            if (string.IsNullOrEmpty(l.Titulo) || string.IsNullOrEmpty(l.Autor) || string.IsNullOrEmpty(l.Ano.ToString()))
+            LivroValidator lv = new();
+            ValidationResult results = lv.Validate(l);
+
+            if (!results.IsValid)
             {
-                ViewData["Erro"] = "Todos os campos devem ser preenchidos";
+                ViewData["Erro"] = results.Errors.FirstOrDefault().ErrorMessage;
                 return View();
+            }
+
+            if (l.Id == 0)
+            {
+                l.Inserir();
             }
             else
             {
-                LivroService livroService = new LivroService();
-
-                if (l.Id == 0)
-                {
-                    livroService.Inserir(l);
-                }
-                else
-                {
-                    livroService.Atualizar(l);
-                }
-
-                return RedirectToAction("Listagem");
+                l.Atualizar();
             }
+
+            return RedirectToAction("Listagem");
         }
 
         public IActionResult Listagem(string tipoFiltro, string filtro, int page = 1)
         {
-            Autenticacao.CheckLogin(this);
+            int pageSize = 10;
+            BibliotecaContext bc = new();
             FiltrosLivros objFiltro = null;
+            int skip = (page - 1) * pageSize;
+
             if (!string.IsNullOrEmpty(filtro))
             {
-                objFiltro = new FiltrosLivros();
+                objFiltro = new();
                 objFiltro.Filtro = filtro;
                 objFiltro.TipoFiltro = tipoFiltro;
             }
-            LivroService livroService = new LivroService();
-            return View(livroService.ListarTodos(objFiltro).OrderBy(a => a.Titulo).ToPagedList(page, 10));
+
+            ViewBag.TotalPaginas = Convert.ToInt32(Math.Ceiling((decimal)bc.Livros.Count() / pageSize));
+            ViewBag.PaginaAtual = page;
+            LivroService ls = new();
+
+            return View(ls.ListarTodos(skip, objFiltro));
         }
 
         public IActionResult Edicao(int id)
         {
-            Autenticacao.CheckLogin(this);
             LivroService ls = new LivroService();
-            Livro l = ls.ObterPorId(id);
-            return View(l);
+            return View(ls.ObterPorId(id));
         }
     }
 }

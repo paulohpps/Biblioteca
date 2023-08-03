@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using X.PagedList;
@@ -6,28 +7,7 @@ namespace Biblioteca.Models
 {
     public class LivroService
     {
-        public void Inserir(Livro l)
-        {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                bc.Livros.Add(l);
-                bc.SaveChanges();
-            }
-        }
-
-        public void Atualizar(Livro l)
-        {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                Livro livro = bc.Livros.Find(l.Id);
-                livro.Autor = l.Autor;
-                livro.Titulo = l.Titulo;
-                livro.Ano = l.Ano;
-                bc.SaveChanges();
-            }
-        }
-
-        public ICollection<Livro> ListarTodos(FiltrosLivros filtro = null)
+        public ICollection<Livro> ListarTodos(int skip, FiltrosLivros filtro = null)
         {
             using (BibliotecaContext bc = new BibliotecaContext())
             {
@@ -35,53 +15,57 @@ namespace Biblioteca.Models
 
                 if (filtro != null)
                 {
-                    //definindo dinamicamente a filtragem
                     switch (filtro.TipoFiltro)
                     {
                         case "Autor":
-                            query = bc.Livros.Where(l => l.Autor.Contains(filtro.Filtro));
+                            query = bc.Livros
+                                .Where(l => l.Autor.Contains(filtro.Filtro))
+                                .OrderBy(a => a.Titulo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
 
                         case "Titulo":
-                            query = bc.Livros.Where(l => l.Titulo.Contains(filtro.Filtro));
+                            query = bc.Livros
+                                .Where(l => l.Titulo.Contains(filtro.Filtro))
+                                .OrderBy(a => a.Titulo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
 
                         default:
-                            query = bc.Livros;
+                            Console.WriteLine("Filtro inválido");
+                            query = bc.Livros
+                                .OrderBy(a => a.Titulo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
                     }
+                    return query.ToList();
                 }
-                else
-                {
-                    // caso filtro não tenha sido informado
-                    query = bc.Livros;
-                }
+                query = bc.Livros
+                    .OrderBy(a => a.Titulo)
+                    .Skip(skip)
+                    .Take(10);
 
-                //ordenação padrão
-                return query.OrderBy(l => l.Titulo).ToList();
+                return query.ToList();
             }
         }
 
         public ICollection<Livro> ListarDisponiveis()
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                //busca os livros onde o id não está entre os ids de livro em empréstimo
-                // utiliza uma subconsulta
-                return
-                    bc.Livros
-                    .Where(l => !(bc.Emprestimos.Where(e => e.Devolvido == false).Select(e => e.LivroId).Contains(l.Id)))
-                    .ToList();
-            }
+            BibliotecaContext bc = new();
+            return bc.Livros.Where(l => !(bc.Emprestimos
+                .Where(e => e.Devolvido == false)
+                .Select(e => e.LivroId)
+                .Contains(l.Id)))
+                .ToList();
         }
 
         public Livro ObterPorId(int id)
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                return bc.Livros.Find(id);
-            }
+            BibliotecaContext bc = new();
+            return bc.Livros.Find(id);
         }
-
     }
 }

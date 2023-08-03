@@ -8,11 +8,11 @@ namespace Biblioteca.Models
     {
         public void Inserir(Emprestimo e)
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                bc.Emprestimos.Add(e);
-                bc.SaveChanges();
-            }
+            BibliotecaContext bc = new();
+
+            e.Valor = e.Livro.ValorAluguel * (e.DataEmprestimo - e.DataDevolucao).Days;
+            bc.Emprestimos.Add(e);
+            bc.SaveChanges();
         }
 
         public void Atualizar(Emprestimo e)
@@ -25,12 +25,14 @@ namespace Biblioteca.Models
                 emprestimo.LivroId = e.LivroId;
                 emprestimo.DataEmprestimo = e.DataEmprestimo;
                 emprestimo.DataDevolucao = e.DataDevolucao;
+                int diasEmprestimo = (e.DataDevolucao - e.DataEmprestimo).Days;
+                emprestimo.Valor = e.Livro.ValorAluguel * diasEmprestimo;
 
                 bc.SaveChanges();
             }
         }
 
-        public ICollection<Emprestimo> ListarTodos(FiltrosEmprestimos filtro = null)
+        public ICollection<Emprestimo> ListarTodos(int skip, FiltrosEmprestimos filtro = null)
         {
             using (BibliotecaContext bc = new BibliotecaContext())
             {
@@ -38,30 +40,41 @@ namespace Biblioteca.Models
 
                 if (filtro != null)
                 {
-                    //definindo dinamicamente a filtragem
                     switch (filtro.TipoFiltro)
                     {
                         case "Usuario":
-                            query = bc.Emprestimos.Where(e => e.NomeUsuario.Contains(filtro.Filtro));
+                            query = bc.Emprestimos
+                                .Where(e => e.NomeUsuario.Contains(filtro.Filtro))
+                                .OrderByDescending(d => d.DataEmprestimo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
 
                         case "Livro":
-                            query = bc.Emprestimos.Where(e => e.Livro.Titulo.Contains(filtro.Filtro));
+                            query = bc.Emprestimos
+                                .Where(e => e.Livro.Titulo.Contains(filtro.Filtro))
+                                .OrderByDescending(d => d.DataEmprestimo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
 
                         default:
-                            query = bc.Emprestimos;
+                            query = bc.Emprestimos
+                                .OrderByDescending(d => d.DataEmprestimo)
+                                .Skip(skip)
+                                .Take(10);
                             break;
                     }
                 }
                 else
                 {
-                    // caso filtro não tenha sido informado
-                    query = bc.Emprestimos;
+                    query = bc.Emprestimos
+                        .OrderByDescending(d => d.DataEmprestimo)
+                        .Skip(skip)
+                        .Take(10);
                 }
 
-                //ordenação padrão
-                return query.OrderBy(e => e.DataDevolucao).Include(e => e.Livro).ToList();
+                return query.Include(e => e.Livro).ToList();
             }
         }
 

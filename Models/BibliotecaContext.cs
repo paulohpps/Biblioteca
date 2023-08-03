@@ -2,11 +2,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Models
 {
-    public class BibliotecaContext : DbContext
+    internal class BibliotecaContext : DbContext
     {
+        protected string connetion = "Server=localhost;DataBase=biblioteca;Uid=root;Password=root";
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("Server=localhost;DataBase=Biblioteca;Uid=root");
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .UseMySql(connetion,ServerVersion.AutoDetect(connetion))
+                .EnableSensitiveDataLogging();
         }
 
         public DbSet<Livro> Livros { get; set; }

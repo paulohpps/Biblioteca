@@ -31,22 +31,21 @@ namespace Biblioteca.Controllers
         [HttpPost]
         public IActionResult Login(string login, string senha)
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
+            BibliotecaContext bc = new BibliotecaContext();
+
+            senha = MD5Service.RetornarMD5(senha);
+            var user = bc.Usuarios.Where(e => e.Login == login).Where(e => e.Senha == senha);
+            if (user.Count() > 0)
             {
-                senha = MD5Service.RetornarMD5(senha);
-                Console.WriteLine(senha);
-                var user = bc.Usuarios.Where(e => e.Login == login).Where(e => e.Senha == senha);
-                if (user.Count() > 0)
-                {
-                    HttpContext.Session.SetString("user", user.First().Nome);
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewData["Erro"] = "Usuário ou Senha inválido";
-                    return View();
-                }
+                HttpContext.Response.Cookies.Append("user", user.First().Nome, new CookieOptions() { Expires = DateTime.Now.AddDays(30) });
+                return RedirectToAction("Index");
             }
+            else
+            {
+                ViewData["Erro"] = "Usuário ou Senha inválido";
+                return View();
+            }
+
         }
 
         public IActionResult Privacy()

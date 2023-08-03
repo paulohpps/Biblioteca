@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Biblioteca</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Biblioteca</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-book"></i> Biblioteca</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -33,7 +34,7 @@
                                 <a class="dropdown-item" href="/Emprestimo/Cadastro">Cadastro</a>
                             </div>
                         </li>
-                        @if (Context.Session.GetString("user") == "admin")
+                        @if (Context.Request.Cookies["user"].ToString() == "admin")
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#">Usuário</a>
@@ -56,7 +57,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - Biblioteca - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023 - Biblioteca - Desenvolvido por <a target="_blank" class="text-decoration-none" href="https://paulohpps.com.br">Paulo Henrique</a>
         </div>
     </footer>
 

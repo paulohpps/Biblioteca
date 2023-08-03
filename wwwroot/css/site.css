@@ -51,6 +51,10 @@ button.accept-policy {
   line-height: inherit;
 }
 
+.table-overflow{
+    overflow-y:auto;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

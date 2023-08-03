@@ -12,9 +12,17 @@
         </div>
         <div>
             <label asp-for="Ano">Ano</label>
-            <input asp-for="Ano" />
+            <input type="number" class="form-control" asp-for="Ano" />
         </div>
-        <input type="submit" value="Salvar" class="btn btn-primary"/>
+        <div>
+            <label asp-for="ValorVenda">Valor Venda</label>
+            <input type="number" step=".01" class="form-control" asp-for="ValorVenda" />
+        </div>
+        <div>
+        <label asp-for="ValorAluguel">Valor Aluguel</label>
+            <input type="number" step=".01" class="form-control" asp-for="ValorAluguel" />
+        </div>
+        <input type="submit" value="Salvar" class="mt-3 btn btn-primary"/>
         <p class="text-danger">@ViewData["Erro"]</p>
     </form>
 </div>

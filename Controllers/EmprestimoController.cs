@@ -1,85 +1,87 @@
 using Biblioteca.Models;
+using Biblioteca.Validations;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Linq;
 using X.PagedList;
 
 namespace Biblioteca.Controllers
 {
-
     public class EmprestimoController : Controller
     {
+        LivroService livroService = new();
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            Autenticacao.CheckLogin(this);
+        }
+
         public IActionResult Cadastro()
         {
-            Autenticacao.CheckLogin(this);
-            LivroService livroService = new LivroService();
             CadEmprestimoViewModel cadModel = new CadEmprestimoViewModel();
             cadModel.Livros = livroService.ListarDisponiveis();
             return View(cadModel);
         }
 
         [HttpPost]
-        public IActionResult Cadastro(CadEmprestimoViewModel viewModel)
+        public IActionResult Cadastro(Emprestimo emprestimo)
         {
-            LivroService livroService = new LivroService();
-            EmprestimoService emprestimoService = new EmprestimoService();
-            CadEmprestimoViewModel cadModel = new CadEmprestimoViewModel();
+            EmprestimoValidator ev = new();
+            ValidationResult results = ev.Validate(emprestimo);
+            CadEmprestimoViewModel cadModel = new();
+
             cadModel.Livros = livroService.ListarDisponiveis();
-            if (string.IsNullOrEmpty(viewModel.Emprestimo.NomeUsuario)
-                || string.IsNullOrEmpty(viewModel.Emprestimo.Telefone)
-                || string.IsNullOrEmpty(viewModel.Emprestimo.DataDevolucao.ToString())
-                || string.IsNullOrEmpty(viewModel.Emprestimo.DataEmprestimo.ToString()))
+
+            if (!results.IsValid)
             {
-                ViewData["Erro"] = "Todos os campos devem ser preenchidos";
+                ViewData["Erro"] = results.Errors.FirstOrDefault().ErrorMessage;
                 return View(cadModel);
             }
-            else if (livroService.ListarDisponiveis().Count == 0)
+
+            if (emprestimo.Id == 0)
             {
-                ViewData["Erro"] = "Nenhum livro disponivel para empréstimo.";
-                return View(cadModel);
+                emprestimo.Inserir();
             }
             else
             {
-                if (viewModel.Emprestimo.DataEmprestimo > viewModel.Emprestimo.DataDevolucao)
-                {
-                    ViewData["Erro"] = "A data de devolução deve ser maior ou igual a data de emprestimo";
-                    return View(cadModel);
-                }
-                if (viewModel.Emprestimo.Id == 0)
-                {
-                    emprestimoService.Inserir(viewModel.Emprestimo);
-                }
-                else
-                {
-                    emprestimoService.Atualizar(viewModel.Emprestimo);
-                }
-                return RedirectToAction("Listagem");
+                emprestimo.Atualizar();
             }
+
+            return RedirectToAction("Listagem");
         }
 
         public IActionResult Listagem(string tipoFiltro, string filtro, int page = 1)
         {
-            Autenticacao.CheckLogin(this);
-
+            int pageSize = 10;
+            int skip = (page - 1) * pageSize;
+            BibliotecaContext bc = new();
             FiltrosEmprestimos objFiltro = null;
+
             if (!string.IsNullOrEmpty(filtro))
             {
                 objFiltro = new FiltrosEmprestimos();
                 objFiltro.Filtro = filtro;
                 objFiltro.TipoFiltro = tipoFiltro;
             }
-            EmprestimoService emprestimoService = new EmprestimoService();
-            return View(emprestimoService.ListarTodos(objFiltro).OrderBy(a => a.DataDevolucao).ToPagedList(page, 10));
+
+            ViewBag.TotalPaginas = Convert.ToInt32(Math.Ceiling((decimal)bc.Emprestimos.Count() / pageSize));
+            ViewBag.PaginaAtual = page;
+            EmprestimoService emprestimoService = new();
+
+            return View(emprestimoService.ListarTodos(skip, objFiltro));
         }
 
         public IActionResult Edicao(int id)
         {
-            Autenticacao.CheckLogin(this);
             LivroService livroService = new LivroService();
             EmprestimoService em = new EmprestimoService();
             Emprestimo e = em.ObterPorId(id);
 
             CadEmprestimoViewModel cadModel = new CadEmprestimoViewModel();
-            cadModel.Livros = livroService.ListarTodos();
+            cadModel.Livros = livroService.ListarDisponiveis();
             cadModel.Emprestimo = e;
 
             return View(cadModel);

@@ -1,5 +1,7 @@
+using Biblioteca.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,15 +17,15 @@ namespace Biblioteca
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddResponseCompression(options => options.EnableForHttps = true);
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -34,6 +36,9 @@ namespace Biblioteca
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseResponseCompression();
+
             app.UseStaticFiles();
 
             app.UseRouting();

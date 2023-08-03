@@ -8,7 +8,6 @@ namespace Biblioteca.Models
         public ICollection<Livro> Livros { get; set; }
         public List<SelectListItem> Countries { get; set; }
 
-
         public Emprestimo Emprestimo { get; set; }
     }
 }
