@@ -19,6 +19,8 @@ namespace Biblioteca.Models
 
         public int Ano { get; set; }
 
+        public int Quantidade { get; set; }
+
         public virtual List<Emprestimo> Emprestimos{ get; set; }
 
         public void Inserir()
@@ -40,18 +42,31 @@ namespace Biblioteca.Models
             livro.ValorVenda = this.ValorVenda;
             livro.ValorAluguel = this.ValorAluguel;
             livro.Ano = this.Ano;
+            livro.Quantidade = this.Quantidade;
 
             bc.Update(livro);
             bc.SaveChanges();
         }
 
-        public void Excluir(int id)
+        public void Excluir()
         {
             BibliotecaContext bc = new();
 
-            Livro livro = bc.Livros.Find(id);
+            Livro livro = bc.Livros.Find(this.Id);
 
-            bc.Livros.Remove(livro);
+            bc.Remove(livro);
+            bc.SaveChanges();
+        }
+
+        public void Vender()
+        {
+            BibliotecaContext bc = new();
+
+            Livro livro = bc.Livros.Find(this.Id);
+
+            livro.Quantidade--;
+
+            bc.Update(livro);
             bc.SaveChanges();
         }
     }

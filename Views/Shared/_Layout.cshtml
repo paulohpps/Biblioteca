@@ -34,7 +34,7 @@
                                 <a class="dropdown-item" href="/Emprestimo/Cadastro">Cadastro</a>
                             </div>
                         </li>
-                        @if (Context.Request.Cookies["user"].ToString() == "admin")
+                        @if (Context.Request.Cookies.Any())
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#">Usuário</a>
@@ -57,7 +57,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - Biblioteca - Desenvolvido por <a target="_blank" class="text-decoration-none" href="https://paulohpps.com.br">Paulo Henrique</a>
+            &copy; 2023 - Biblioteca - Desenvolvido por <a target="_blank" class="text-decoration-none" href="https://paulohpps.com.br">Paulo Henrique</a> e <a target="_blank" class="text-decoration-none" href="https://miguel-oliveira.dev/">Miguel Oliveira</a>
         </div>
     </footer>
 

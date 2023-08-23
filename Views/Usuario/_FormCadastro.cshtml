@@ -1,6 +1,6 @@
 ﻿@model Usuario
 <div class="row justify-content-md-center">
-    <form asp-action="Cadastro" method="POST" class="col-md-4">
+    <form asp-action="CadastroUser" asp-controller="Usuario" method="POST" class="col-md-4">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="Nome">Nome</label>

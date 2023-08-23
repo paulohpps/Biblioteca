@@ -1,40 +1,45 @@
 ﻿using Biblioteca.Cryptography;
 using Biblioteca.Models;
+using Biblioteca.Validations;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Linq;
-using X.PagedList;
 
 namespace Biblioteca.Controllers
 {
     public class UsuarioController : Controller
     {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            Autenticacao.CheckLogin(this);
+        }
+
+        [Route("/Usuario/Cadastro")]
         public IActionResult Cadastro()
         {
-            Autenticacao.CheckLogin(this);
-            if (HttpContext.Session.GetString("user") == "admin")
+            if (HttpContext.Request.Cookies["user"] == "admin")
             {
                 return View();
             }
-            else
-            {
-                HttpContext.Response.Redirect("/Home");
-            }
+
+            HttpContext.Response.Redirect("/Home");
             return View();
         }
+
         public IActionResult Excluir(int id)
         {
-            Autenticacao.CheckLogin(this);
             if (HttpContext.Session.GetString("user") == "admin")
             {
                 UsuarioService usuarioService = new UsuarioService();
                 Usuario user = usuarioService.ObterPorId(id);
                 return View(user);
             }
-            else
-            {
-                HttpContext.Response.Redirect("/Home");
-            }
+            HttpContext.Response.Redirect("/Home");
+
             return View();
         }
 
@@ -48,41 +53,45 @@ namespace Biblioteca.Controllers
             }
             return RedirectToAction("Listagem");
         }
+
         [HttpPost]
-        public IActionResult Cadastro(Usuario user)
+        public IActionResult CadastroUser(Usuario user)
         {
-            UsuarioService usuarioService = new UsuarioService();
-            if (string.IsNullOrEmpty(user.Nome) || string.IsNullOrEmpty(user.Login) || string.IsNullOrEmpty(user.Senha))
+            UsuarioValidator validator = new();
+            ValidationResult results = validator.Validate(user);
+            UsuarioService usuarioService = new();
+
+            if (!results.IsValid)
             {
-                ViewData["Erro"] = "Todos os campos devem ser preenchidos.";
+                ViewData["Erro"] = results.Errors.First();
                 return View();
             }
-            else if (usuarioService.ListarTodos().Count(e => e.Login == user.Login) > 0 && user.Id == 0)
+
+            if (usuarioService.ListarTodos().Any(u => u.Login == user.Login))
             {
                 ViewData["Erro"] = "Já existe um usuário cadastrado com esse login.";
                 return View();
             }
+
+            user.Senha = MD5Service.RetornarMD5(user.Senha);
+            if (user.Id == 0)
+            {
+                user.Inserir();
+            }
             else
             {
-
-                user.Senha = MD5Service.RetornarMD5(user.Senha);
-                if (user.Id == 0)
-                {
-                    usuarioService.Inserir(user);
-                }
-                else
-                {
-                    usuarioService.Atualizar(user);
-                }
-                return RedirectToAction("Listagem");
+                user.Atualizar();
             }
+            return RedirectToAction("Listagem");
         }
 
         public IActionResult Listagem(string tipoFiltro, string filtro, int page = 1)
         {
-            Autenticacao.CheckLogin(this);
-            UsuarioService usuarioService = new UsuarioService();
-            if (HttpContext.Session.GetString("user") == "admin")
+            int pageSize = 10;
+            BibliotecaContext bc = new BibliotecaContext();
+            int skip = (page - 1) * pageSize;
+
+            if (HttpContext.Request.Cookies["user"] == "admin")
             {
                 FiltrosUsuarios objFiltro = null;
                 if (!string.IsNullOrEmpty(filtro))
@@ -91,20 +100,22 @@ namespace Biblioteca.Controllers
                     objFiltro.Filtro = filtro;
                     objFiltro.TipoFiltro = tipoFiltro;
                 }
+                ViewBag.TotalPaginas = Convert.ToInt32(Math.Ceiling((decimal)bc.Usuarios.Count() / pageSize));
+                ViewBag.PaginaAtual = page;
+                UsuarioService usuarioService = new UsuarioService();
 
-                return View(usuarioService.ListarTodos(objFiltro).OrderBy(a => a.Nome).ToPagedList(page, 10));
+                return View(usuarioService.ListarTodos(skip, objFiltro));
             }
             else
             {
                 HttpContext.Response.Redirect("/Home");
             }
-            return View(usuarioService.ListarTodos());
+
+            return NotFound();
         }
 
         public IActionResult Edicao(int id)
         {
-            Autenticacao.CheckLogin(this);
-
             if (HttpContext.Session.GetString("user") == "admin")
             {
                 UsuarioService usuarioService = new UsuarioService();

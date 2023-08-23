@@ -30,6 +30,7 @@ namespace Biblioteca.Controllers
         public IActionResult Cadastro(Emprestimo emprestimo)
         {
             EmprestimoValidator ev = new();
+            BibliotecaContext bc = new();
             ValidationResult results = ev.Validate(emprestimo);
             CadEmprestimoViewModel cadModel = new();
 
@@ -47,7 +48,14 @@ namespace Biblioteca.Controllers
             }
             else
             {
-                emprestimo.Atualizar();
+                if(emprestimo.Devolvido == false)
+                { 
+                    emprestimo.Atualizar();
+                }
+                else if(emprestimo.Devolvido == true)
+                {
+                    emprestimo.Devolver();
+                }
             }
 
             return RedirectToAction("Listagem");

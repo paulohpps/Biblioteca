@@ -34,6 +34,7 @@
                                 <th>Titulo</th>
                                 <th>Autor</th>
                                 <th>Ano</th>
+                                <th>Quantidade</th>
                                 <th>Valor Venda</th>
                                 <th>Valor Aluguel (Dia)</th>
                                 <th>Ações</th>
@@ -46,9 +47,13 @@
                                     <td>@l.Titulo</td>
                                     <td>@l.Autor</td>
                                     <td>@l.Ano</td>
+                                    <td>@l.Quantidade</td>
                                     <td>R$@l.ValorVenda</td>
                                     <td>R$@l.ValorAluguel</td>
-                                    <td><a href="/Livro/Edicao/@l.Id">Editar</a></td>
+                                    <td>
+                                        <a href="/Livro/Edicao/@l.Id">Editar</a>
+                                        <a href="/Livro/Vender/@l.Id">Vender</a>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -56,8 +61,6 @@
                 </div>
             </div>
         </div>
-
-
     }
     else
     {

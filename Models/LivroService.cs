@@ -34,7 +34,6 @@ namespace Biblioteca.Models
                             break;
 
                         default:
-                            Console.WriteLine("Filtro inválido");
                             query = bc.Livros
                                 .OrderBy(a => a.Titulo)
                                 .Skip(skip)

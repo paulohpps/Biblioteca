@@ -4,13 +4,13 @@ namespace Biblioteca.Models
 {
     internal class BibliotecaContext : DbContext
     {
-        protected string connetion = "Server=localhost;DataBase=biblioteca;Uid=root;Password=root";
+        protected string connection = "Server=localhost;DataBase=biblioteca;Uid=root;Password=root";
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
                 .UseLazyLoadingProxies()
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .UseMySql(connetion,ServerVersion.AutoDetect(connetion))
+                .UseInMemoryDatabase("Biblioteca")
                 .EnableSensitiveDataLogging();
         }
 

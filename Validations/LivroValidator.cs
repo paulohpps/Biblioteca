@@ -21,6 +21,10 @@ namespace Biblioteca.Validations
                 .GreaterThan(1800)
                 .LessThanOrEqualTo(DateTime.Now.Year);
 
+            RuleFor(livro => livro.Quantidade)
+                .NotEmpty()
+                .GreaterThan(-1);
+
             RuleFor(livro => livro.ValorVenda)
                 .NotEmpty()
                 .GreaterThan(0)
@@ -30,7 +34,6 @@ namespace Biblioteca.Validations
                 .NotEmpty()
                 .GreaterThan(0)
                 .WithMessage("O Valor do Aluguel deve ser maior que R$0,00");
-
         }
     }
 }

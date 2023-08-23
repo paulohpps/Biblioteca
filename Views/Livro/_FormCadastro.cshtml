@@ -15,6 +15,10 @@
             <input type="number" class="form-control" asp-for="Ano" />
         </div>
         <div>
+            <label asp-for="Quantidade">Quantidade</label>
+            <input type="number" min="0" class="form-control" asp-for="Quantidade" />
+        </div>
+        <div>
             <label asp-for="ValorVenda">Valor Venda</label>
             <input type="number" step=".01" class="form-control" asp-for="ValorVenda" />
         </div>
@@ -22,7 +26,8 @@
         <label asp-for="ValorAluguel">Valor Aluguel</label>
             <input type="number" step=".01" class="form-control" asp-for="ValorAluguel" />
         </div>
-        <input type="submit" value="Salvar" class="mt-3 btn btn-primary"/>
-        <p class="text-danger">@ViewData["Erro"]</p>
+
+        <p class="text-danger mt-3">@ViewData["Erro"]</p>
+        <input type="submit" value="Salvar" class="btn btn-primary"/>
     </form>
 </div>

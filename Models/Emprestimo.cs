@@ -37,8 +37,25 @@ namespace Biblioteca.Models
             Livro livro = bc.Livros.Find(this.LivroId);
 
             this.Valor = livro.ValorAluguel * (this.DataDevolucao - this.DataEmprestimo).Days;
+            livro.Quantidade--;
 
+            bc.Update(livro);
             bc.Emprestimos.Add(this);
+
+            bc.SaveChanges();
+        }
+
+        public void Devolver()
+        {
+            BibliotecaContext bc = new();
+
+            Emprestimo emprestimo = bc.Emprestimos.Find(this.Id);
+            Livro livro = bc.Livros.First(l => l.Id == emprestimo.LivroId);
+
+            emprestimo.Devolvido = true;
+            livro.Quantidade++;
+            bc.Livros.Update(livro);
+            bc.Emprestimos.Update(emprestimo);
             bc.SaveChanges();
         }
 

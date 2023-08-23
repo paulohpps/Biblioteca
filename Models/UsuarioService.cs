@@ -25,44 +25,50 @@ namespace Biblioteca.Models
                 bc.SaveChanges();
             }
         }
-        public ICollection<Usuario> ListarTodos(FiltrosUsuarios filtro = null)
+        public ICollection<Usuario> ListarTodos(int skip = 0, FiltrosUsuarios filtro = null)
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
+            BibliotecaContext bc = new();
+            IQueryable<Usuario> query;
+
+            if (filtro != null)
             {
-                IQueryable<Usuario> query;
-
-                if (filtro != null)
+                switch (filtro.TipoFiltro)
                 {
-                    //definindo dinamicamente a filtragem
-                    switch (filtro.TipoFiltro)
-                    {
-                        case "Nome":
-                            query = bc.Usuarios.Where(user => user.Nome.Contains(filtro.Filtro));
-                            break;
-                        case "Login":
-                            query = bc.Usuarios.Where(user => user.Login.Contains(filtro.Filtro));
-                            break;
-                        default:
-                            query = bc.Usuarios;
-                            break;
-                    }
-                }
-                else
-                {
-                    // caso filtro não tenha sido informado
-                    query = bc.Usuarios;
-                }
+                    case "Nome":
+                        query = bc.Usuarios
+                            .Where(user => user.Nome.Contains(filtro.Filtro))
+                            .Skip(skip)
+                            .Take(10);
+                        break;
 
-                //ordenação padrão
-                return query.OrderBy(user => user.Id).ToList();
+                    case "Login":
+                        query = bc.Usuarios
+                            .Where(user => user.Login.Contains(filtro.Filtro))
+                            .Skip(skip)
+                            .Take(10);
+                        break;
+                         
+                    default:
+                        query = bc.Usuarios
+                            .Skip(skip)
+                            .Take(10);
+                        break;
+                }
             }
+            else
+            {
+                query = bc.Usuarios
+                    .Skip(skip)
+                    .Take(10);
+            }
+
+            return query.OrderBy(user => user.Id).ToList();
+
         }
         public Usuario ObterPorId(int id)
         {
-            using (BibliotecaContext bc = new BibliotecaContext())
-            {
-                return bc.Usuarios.Find(id);
-            }
+            using BibliotecaContext bc = new();
+            return bc.Usuarios.Find(id);
         }
     }
 }

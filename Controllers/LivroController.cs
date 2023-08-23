@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Linq;
 using FluentValidation.Results;
+using System.Data.Entity;
 
 namespace Biblioteca.Controllers
 {
@@ -71,5 +72,14 @@ namespace Biblioteca.Controllers
             LivroService ls = new LivroService();
             return View(ls.ObterPorId(id));
         }
+
+        public IActionResult Vender(int id)
+        {
+            BibliotecaContext db = new();
+            Livro l = db.Livros.Find(id);
+            l.Vender();
+
+            return RedirectToAction("Listagem");
+        } 
     }
 }
