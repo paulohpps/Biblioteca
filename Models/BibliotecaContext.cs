@@ -10,7 +10,7 @@ namespace Biblioteca.Models
             optionsBuilder
                 .UseLazyLoadingProxies()
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .UseInMemoryDatabase("Biblioteca")
+                .UseMySql(connection,ServerVersion.AutoDetect(connection))
                 .EnableSensitiveDataLogging();
         }
 

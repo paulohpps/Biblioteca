@@ -30,7 +30,7 @@
                 <div class="table-overflow">
                     <table class="table table-striped table-bordered">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>Titulo</th>
                                 <th>Autor</th>
                                 <th>Ano</th>
@@ -50,9 +50,16 @@
                                     <td>@l.Quantidade</td>
                                     <td>R$@l.ValorVenda</td>
                                     <td>R$@l.ValorAluguel</td>
-                                    <td>
-                                        <a href="/Livro/Edicao/@l.Id">Editar</a>
-                                        <a href="/Livro/Vender/@l.Id">Vender</a>
+                                    <td class="text-center">
+                                        <a class="btn btn-primary me-2" href="/Livro/Edicao/@l.Id">Editar</a>
+                                        @if (l.Quantidade > 0)
+                                        {
+                                            <a class="btn btn-primary " href="/Livro/Vender/@l.Id">Vender</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-primary disabled" href="/Livro/Vender/@l.Id">Esgotado</a>
+                                        }
                                     </td>
                                 </tr>
                             }
