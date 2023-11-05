@@ -45,48 +45,51 @@ namespace Biblioteca.Models
             bc.SaveChanges();
         }
 
+        public void Excluir()
+        {
+            BibliotecaContext bc = new();
+            Livro livro = bc.Livros.Find(this.LivroId);
+
+            if(this.Devolvido == false)
+                livro.Quantidade++;
+
+            bc.Update(livro);
+            bc.Emprestimos.Remove(this);
+            bc.SaveChanges();
+        }
+
         public void Devolver()
         {
             BibliotecaContext bc = new();
+            Livro livro = bc.Livros.First(l => l.Id == this.LivroId);
 
-            Emprestimo emprestimo = bc.Emprestimos.Find(this.Id);
-            Livro livro = bc.Livros.First(l => l.Id == emprestimo.LivroId);
-
-            emprestimo.Devolvido = true;
+            this.Devolvido = true;
             livro.Quantidade++;
+
             bc.Livros.Update(livro);
-            bc.Emprestimos.Update(emprestimo);
+            bc.Emprestimos.Update(this);
+            bc.SaveChanges();
+        }
+
+        public void Emprestar()
+        {
+            BibliotecaContext bc = new();
+            Livro livro = bc.Livros.First(l => l.Id == this.LivroId);
+
+            this.Devolvido = false;
+            livro.Quantidade--;
+
+            bc.Livros.Update(livro);
+            bc.Emprestimos.Update(this);
             bc.SaveChanges();
         }
 
         public void Atualizar()
         {
             BibliotecaContext bc = new();
-
-            Emprestimo emprestimo = bc.Emprestimos.Find(this.Id);
             Livro livro = bc.Livros.Find(this.LivroId);
 
-            emprestimo.DataEmprestimo = this.DataEmprestimo;
-            emprestimo.DataDevolucao = this.DataDevolucao;
-            emprestimo.NomeUsuario = this.NomeUsuario;
-            emprestimo.Telefone = this.Telefone;
-            emprestimo.Devolvido = this.Devolvido;
-            emprestimo.LivroId = this.LivroId;
-
-            if(!emprestimo.Devolvido)
-            {
-                emprestimo.Valor = livro.ValorAluguel * (this.DataDevolucao - this.DataEmprestimo).Days;
-                if (this.DataDevolucao < DateTime.Now)
-                {
-                    emprestimo.ValorMulta = livro.ValorAluguel * 1.1m * (DateTime.Now - this.DataDevolucao).Days;
-                }
-                else
-                {
-                    emprestimo.ValorMulta = 0;
-                }
-            }
-
-            bc.Update(emprestimo);
+            bc.Update(this);
             bc.SaveChanges();
         }
 

@@ -1,4 +1,5 @@
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Biblioteca.Validations;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +94,34 @@ namespace Biblioteca.Controllers
             cadModel.Emprestimo = e;
 
             return View(cadModel);
+        }
+
+
+        public IActionResult Devolver(int id)
+        {
+            EmprestimoService em = new EmprestimoService();
+            Emprestimo e = em.ObterPorId(id);
+
+            e.Devolver();
+            return RedirectToAction("Listagem");
+        }
+
+        public IActionResult Emprestar(int id)
+        {
+            EmprestimoService em = new EmprestimoService();
+            Emprestimo e = em.ObterPorId(id);
+
+            e.Emprestar();
+            return RedirectToAction("Listagem");
+        }
+
+        public IActionResult Excluir(int id)
+        {
+            EmprestimoService em = new EmprestimoService();
+            Emprestimo e = em.ObterPorId(id);
+
+            e.Excluir();
+            return RedirectToAction("Listagem");
         }
     }
 }

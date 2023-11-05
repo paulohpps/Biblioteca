@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Biblioteca.Models;
 using X.PagedList;
 
-namespace Biblioteca.Models
+namespace Biblioteca.Services
 {
     public class LivroService
     {
@@ -54,10 +55,10 @@ namespace Biblioteca.Models
         public ICollection<Livro> ListarDisponiveis()
         {
             BibliotecaContext bc = new();
-            return bc.Livros.Where(l => !(bc.Emprestimos
+            return bc.Livros.Where(l => !bc.Emprestimos
                 .Where(e => e.Devolvido == false)
                 .Select(e => e.LivroId)
-                .Contains(l.Id)))
+                .Contains(l.Id))
                 .ToList();
         }
 

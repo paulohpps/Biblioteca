@@ -33,15 +33,18 @@
                 <select asp-for="Emprestimo.LivroId" class="form-control">
                     @foreach(Livro l in Model.Livros)
                     {
-                        <option value="@l.Id">@l.Titulo</option>
+                        if(l.Id == Model.Emprestimo.LivroId)
+                        {
+                            <option value="@l.Id" selected="selected">@l.Titulo</option>
+                        }
+                        else
+                        {
+                            <option value="@l.Id">@l.Titulo</option>
+                        }
                     }
                 </select>
             </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" asp-for="Emprestimo.Devolvido" />
-                <label class="form-check-label" for="Devolvido">Devolvido</label>
-            </div>
         </fieldset>
-        <input type="submit" value="Salvar" class="btn btn-primary"/>
+        <input type="submit" value="Salvar" class="btn btn-primary mt-2"/>
     </form>
 </div>

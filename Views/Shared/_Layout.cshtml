@@ -34,6 +34,12 @@
                                 <a class="dropdown-item" href="/Emprestimo/Cadastro">Cadastro</a>
                             </div>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-light dropdown-toggle" data-toggle="dropdown" href="#">Vendas</a>
+                            <div class="dropdown-menu" aria-labelledby="menuLivros">
+                                <a class="dropdown-item" asp-controller="Venda" asp-action="Listagem">Listagem</a>
+                            </div>
+                        </li>
                         @if (Context.Request.Cookies.Any())
                         {
                             <li class="nav-item dropdown">
@@ -56,8 +62,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Biblioteca - Desenvolvido por <a target="_blank" class="text-decoration-none" href="https://paulohpps.com.br">Paulo Henrique</a> e <a target="_blank" class="text-decoration-none" href="https://miguel-oliveira.dev/">Miguel Oliveira</a>
+        <div class="container text-center">
+            &copy; 2023 - Biblioteca - Desenvolvido por <a target="_blank" class="text-decoration-none" href="https://paulohpps.com.br">Paulo Henrique</a>
         </div>
     </footer>
 

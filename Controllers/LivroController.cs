@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using FluentValidation.Results;
 using System.Data.Entity;
+using Biblioteca.Services;
 
 namespace Biblioteca.Controllers
 {
@@ -77,7 +78,11 @@ namespace Biblioteca.Controllers
         {
             BibliotecaContext db = new();
             Livro l = db.Livros.Find(id);
-            l.Vender();
+
+            if (l.Quantidade > 0)
+            {
+                l.Vender();
+            }
 
             return RedirectToAction("Listagem");
         } 

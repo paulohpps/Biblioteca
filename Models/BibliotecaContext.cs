@@ -9,13 +9,13 @@ namespace Biblioteca.Models
         {
             optionsBuilder
                 .UseLazyLoadingProxies()
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .UseInMemoryDatabase("Biblioteca")
+                .UseMySql(connection,ServerVersion.AutoDetect(connection))
                 .EnableSensitiveDataLogging();
         }
 
         public DbSet<Livro> Livros { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Venda> Vendas { get; set; }
     }
 }

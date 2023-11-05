@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Biblioteca.Models;
 
-namespace Biblioteca.Models
+namespace Biblioteca.Services
 {
     public class UsuarioService
     {
@@ -47,7 +48,7 @@ namespace Biblioteca.Models
                             .Skip(skip)
                             .Take(10);
                         break;
-                         
+
                     default:
                         query = bc.Usuarios
                             .Skip(skip)
