@@ -1,8 +1,9 @@
+using Biblioteca.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Biblioteca.Models
+namespace Biblioteca.Services
 {
     public class EmprestimoService
     {

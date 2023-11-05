@@ -1,5 +1,6 @@
 ﻿using Biblioteca.Cryptography;
 using Biblioteca.Models;
+using Biblioteca.Services;
 using Biblioteca.Validations;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;

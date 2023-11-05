@@ -64,7 +64,13 @@ namespace Biblioteca.Models
 
             Livro livro = bc.Livros.Find(this.Id);
 
-            livro.Quantidade--;
+            livro!.Quantidade--;
+
+            Venda venda = new();
+            venda.LivroId = livro.Id;
+            venda.Valor = livro.ValorVenda;
+            venda.DataVenda = System.DateTime.Now;
+            venda.Inserir();
 
             bc.Update(livro);
             bc.SaveChanges();

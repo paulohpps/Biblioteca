@@ -9,7 +9,6 @@ namespace Biblioteca.Models
         {
             optionsBuilder
                 .UseLazyLoadingProxies()
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .UseMySql(connection,ServerVersion.AutoDetect(connection))
                 .EnableSensitiveDataLogging();
         }
@@ -17,5 +16,6 @@ namespace Biblioteca.Models
         public DbSet<Livro> Livros { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Venda> Vendas { get; set; }
     }
 }

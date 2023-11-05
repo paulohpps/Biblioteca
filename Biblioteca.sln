@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Biblioteca", "Biblioteca.csproj", "{8A9C1222-9165-4761-AE4A-4F773BD5C086}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibliotecaTest", "..\BibliotecaTest\BibliotecaTest.csproj", "{409EF398-EE93-494A-AFE7-64FF13A2898A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8A9C1222-9165-4761-AE4A-4F773BD5C086}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A9C1222-9165-4761-AE4A-4F773BD5C086}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A9C1222-9165-4761-AE4A-4F773BD5C086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{409EF398-EE93-494A-AFE7-64FF13A2898A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{409EF398-EE93-494A-AFE7-64FF13A2898A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{409EF398-EE93-494A-AFE7-64FF13A2898A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{409EF398-EE93-494A-AFE7-64FF13A2898A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
